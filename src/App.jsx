@@ -20,6 +20,8 @@ function App() {
           <List label="Rol" items={allDataTable.sortedList || []} />
         </div>
         <BarChart barData={allDataTable} />
+        <BarChart barData={allDataTable} withMidpoint />
+
         <Table data={allDataTable} />
         <Table simpleFrequency={simpleFrequency} />
       </div>

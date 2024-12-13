@@ -6,25 +6,30 @@ import {
   Title,
   Tooltip,
   Legend,
+  LineElement,
+  PointElement,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-// Registra os componentes necessários para o Chart.js funcionar
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  LineElement,
+  PointElement
 );
 
-export default function BarChart({ barData = [] }) {
-  const labels = barData.table?.map((item) => item.values);
-  const absoluteFrequencies = barData.table?.map(
-    (item) => item.absoluteFrequency
-  );
+export default function BarChart({ barData = [], withMidpoint = false }) {
+  const labels = barData.table?.map((item) => item.values) || [];
+  const absoluteFrequencies =
+    barData.table?.map((item) => item.absoluteFrequency) || [];
 
+  const midpointHeights = absoluteFrequencies;
+
+  // Dados do gráfico
   const data = {
     labels,
     datasets: [
@@ -37,7 +42,24 @@ export default function BarChart({ barData = [] }) {
         hoverBackgroundColor: "rgba(156, 227, 125, 0.8)",
         hoverBorderColor: "#87b37a",
         barThickness: 160,
+        yAxisID: "y", 
       },
+      ...(withMidpoint
+        ? [
+            {
+              label: "Ponto Médio",
+              data: midpointHeights,
+              type: "line",
+              borderColor: "#FF6B6B",
+              borderWidth: 2,
+              pointRadius: 5,
+              fill: false,
+              tension: 0.3,
+              yAxisID: "y1",
+              order: 0,
+            },
+          ]
+        : []),
     ],
   };
 
@@ -67,7 +89,6 @@ export default function BarChart({ barData = [] }) {
         grid: {
           color: "rgba(255, 255, 255, 0.1)",
         },
-        // Ajustando para barras encostarem
         stacked: true,
         categoryPercentage: 1.0,
         barPercentage: 1.0,
@@ -79,6 +100,18 @@ export default function BarChart({ barData = [] }) {
         grid: {
           color: "rgba(255, 255, 255, 0.1)",
         },
+        min: 0,
+        display: true,
+      },
+      y1: {
+        ticks: {
+          color: "#f5f5f7",
+        },
+        grid: {
+          color: "rgba(255, 255, 255, 0.1)",
+        },
+        position: "right",
+        display: true,
       },
     },
   };
